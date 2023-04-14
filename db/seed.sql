@@ -3,31 +3,34 @@ use employees;
 INSERT INTO department
     (name)
 VALUES
-    ('Sales'),
-    ('Engineering'),
+    ('Program'),
+    ('Human Resource'),
+    ('IT'),
     ('Finance'),
-    ('Legal');
+    ('Admin');
 
 INSERT INTO role
     (title, salary, department_id)
 VALUES
-    ('Sales Lead', 100000, 1),
-    ('Salesperson', 80000, 1),
-    ('Lead Engineer', 150000, 2),
-    ('Software Engineer', 120000, 2),
-    ('Account Manager', 160000, 3),
-    ('Accountant', 125000, 3),
-    ('Legal Team Lead', 250000, 4),
-    ('Lawyer', 190000, 4);
+    ('Program Manager', 100000, 1),
+    ('Program Officer', 80000, 1),
+    ('HR Manager', 150000, 2),
+    ('HR OFficer', 120000, 2),
+    ('IT Manager', 160000, 3),
+    ('IT Officer', 125000, 3),
+    ('Finance Manager', 250000, 4),
+    ('Finance Officer', 190000, 4),
+    ('Admin Manager', 19000, 5),
+    ('Admin Officer', 15000, 5);
 
 INSERT INTO employee
     (first_name, last_name, role_id, manager_id)
 VALUES
-    ('John', 'Doe', 1, NULL),
-    ('Mike', 'Chan', 2, 1),
-    ('Ashley', 'Rodriguez', 3, NULL),
-    ('Kevin', 'Tupik', 4, 3),
-    ('Kunal', 'Singh', 5, NULL),
-    ('Malia', 'Brown', 6, 5),
-    ('Sarah', 'Lourd', 7, NULL),
-    ('Tom', 'Allen', 8, 7);
+    ('Farid', 'Gardoon', 1, NULL),
+    ('Mike', 'Tyson', 2, 1),
+    ('Ashley', 'Attar', 3, NULL),
+    ('Albert', 'Owens', 4, 3),
+    ('Bob', 'Logab', 5, NULL),
+    ('Nabi', 'Roshan', 6, 5),
+    ('Sarah', 'loony', 7, NULL),
+    ('Tom', 'Cleveland', 8, 7);
