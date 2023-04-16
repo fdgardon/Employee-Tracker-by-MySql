@@ -18,6 +18,7 @@ function AskQuestion() {
         "Remove a role",
         "Show all employees",
         "Add an employee",
+        "Remove an employee",
         "Update an employee role",
         "I am done",
       ],
@@ -48,6 +49,9 @@ function AskQuestion() {
           break;
         case 'Add an employee':
           addAnEmployee()
+          break;
+        case 'Remove an employee':
+          removeEmployee()
           break;
         case 'Update an employee role':
           updateEmployeeRole()
@@ -265,6 +269,39 @@ function addAnEmployee() {
   });
 };
 
-
+// Remove an employee
+function removeEmployee() {
+  const sqlQuery = 'SELECT id, first_name, last_name FROM employee';
+  connect.query(sqlQuery, function (error, results) {
+    if (error) throw error;
+    const employees = results.map(employee => ({
+      name: `${employee.first_name} ${employee.last_name}`,
+      value: employee.id,
+    }));
+    employees.unshift({
+			name: 'None',
+			value: null,
+		});
+    inquirer.prompt([
+        {
+          type: 'list',
+          name: 'id',
+          message: 'Which employee would you like to remove?',
+          choices: employees
+          }
+        ])
+      
+      .then(response => {
+        console.log(response);
+        let sqlQuery = 'DELETE FROM employee where id = ?';
+        let depId = response.id;
+        connect.query(sqlQuery, depId, function (error, results) {
+          if (error) throw error;
+          console.log('Employee has been destroyed!');
+          AskQuestion()
+        });
+      });
+  });
+};
 
 
