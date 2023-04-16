@@ -2,7 +2,7 @@ const inquirer = require('inquirer');
 const connect = require('./connection');
 
 AskQuestion();
-
+//run prompt question
 function AskQuestion() {
   inquirer.prompt([
     {
@@ -57,15 +57,15 @@ function AskQuestion() {
 
     })
 };
-
-const viewAllDep = () => {
+// view all department
+function viewAllDep() {
   connect.query("SELECT * FROM department", (err, res) => {
     if (err) throw err;
     console.table(res);
     AskQuestion();
   });
 };
-const addDepartment = () => {
+function addDepartment() {
   inquirer.prompt([
     {
       type: "input",
@@ -82,8 +82,8 @@ const addDepartment = () => {
       });
     })
 };
-
-const removeDepartment = () => {
+// Remove any department as user wants
+function removeDepartment() {
   connect.query('SELECT * FROM department', function (error, results) {
     let departments = [];
     if (error) throw error;
@@ -115,8 +115,8 @@ const removeDepartment = () => {
   });
 };
 
-
-const showAllRoles = () => {
+// show all roles 
+function showAllRoles() {
   connect.query("SELECT * FROM role", (err, res) => {
     if (err) throw err;
     console.table(res);
@@ -124,54 +124,54 @@ const showAllRoles = () => {
   });
 };
 
-const addARole = () => {
-	let sqlQuery = 'SELECT * FROM department';
-	connect.query(sqlQuery, function (error, results) {
-		let departments = [];
-		if (error) throw error;
-		departments = results.map(result => ({
-			id: result.id,
-			name: result.name,
-		}));
-		inquirer
-			.prompt([
-				{
-					type: 'input',
-					name: 'title',
-					message: 'Please, add a role title',
-				},
-				{
-					type: 'input',
-					name: 'salary',
-					message: 'Please, add a salary for this role',
-				},
-				{
-					type: 'list',
-					name: 'id',
-					message: 'Which department this role belongs to?',
-					choices: departments.map(dep => ({
-						name: dep.name,
-						value: dep.id,
-					})),
-				},
-			])
-			.then(response => {
-				let sqlQuery = 'INSERT INTO role SET ?';
-				let newRole = {
-					title: response.title,
-					salary: response.salary,
-					department_id: response.id,
-				};
-				connect.query(sqlQuery, newRole, function (error, results) {
-					if (error) throw error;
-					console.log('Role has been added');
+function addARole() {
+  let sqlQuery = 'SELECT * FROM department';
+  connect.query(sqlQuery, function (error, results) {
+    let departments = [];
+    if (error) throw error;
+    departments = results.map(result => ({
+      id: result.id,
+      name: result.name,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: 'input',
+          name: 'title',
+          message: 'Please, add a role title',
+        },
+        {
+          type: 'input',
+          name: 'salary',
+          message: 'Please, add a salary for this role',
+        },
+        {
+          type: 'list',
+          name: 'id',
+          message: 'Which department this role belongs to?',
+          choices: departments.map(dep => ({
+            name: dep.name,
+            value: dep.id,
+          })),
+        },
+      ])
+      .then(response => {
+        let sqlQuery = 'INSERT INTO role SET ?';
+        let newRole = {
+          title: response.title,
+          salary: response.salary,
+          department_id: response.id,
+        };
+        connect.query(sqlQuery, newRole, function (error, results) {
+          if (error) throw error;
+          console.log('Role has been added');
           AskQuestion();
-				});
-			});
-	});
+        });
+      });
+  });
 };
-
-const removeARole = () => {
+// remove any role as user wants
+function removeARole() {
   connect.query('SELECT * FROM role', function (error, results) {
     let roles = [];
     if (error) throw error;
@@ -201,6 +201,64 @@ const removeARole = () => {
         connect.query(sqlQuery, roleId, function (error, results) {
           if (error) throw error;
           console.log('Department has been destroyed!');
+          AskQuestion()
+        });
+      });
+  });
+};
+
+// Show all employees
+function showAllEmployees() {
+  let sqlQuery = `SELECT employee.id, employee.first_name, employee.last_name,
+       CONCAT (employee.first_name,' ', employee.last_name)
+       as NAME, role.title as ROLE, 
+       department.name as DEPARTMENT, 
+       CONCAT (manager.first_name, ' ', manager.last_name) 
+       AS MANAGER FROM employee 
+       LEFT JOIN role on employee.role_id = role.id 
+       LEFT JOIN department on role.department_id = department.id 
+       LEFT JOIN employee manager on employee.manager_id = manager.id`;
+  connect.query(sqlQuery, function (error, results) {
+    if (error) throw error;
+    console.table(results, ['NAME', 'ROLE', 'DEPARTMENT', 'MANAGER']);
+    AskQuestion();
+  })
+};
+
+// Add an employee
+function addAnEmployee() {
+  const sqlQuery = 'INSERT INTO employee SET ?';
+  const roleQuery = 'SELECT * FROM role';
+  connect.query(roleQuery, function (error, results) {
+    let roles = [];
+    if (error) throw error;
+    roles = results.map(result => ({
+      id: result.id,
+      title: result.title,
+    }));
+
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "first_name",
+          message: "What is the employee's first name?",
+        },
+        {
+          type: "input",
+          name: "last_name",
+          message: "What is the employee's last name?",
+        },
+        {
+          type: "input",
+          name: "role_id",
+          message: "What is the employee's role ID?",
+        },
+      ])
+      .then((response) => {
+        connect.query("INSERT INTO employee SET ?", response, (err, results) => {
+          if (err) throw err;
+          console.log("Employee added successfully.");
           AskQuestion()
         });
       });
