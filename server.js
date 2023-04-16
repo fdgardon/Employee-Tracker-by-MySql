@@ -84,10 +84,10 @@ const removeDepartment = () => {
 			.then(response => {
 				let sqlQuery = 'DELETE FROM department where id = ?';
 				let depId = response.id;
-				conn.query(sqlQuery, depId, function (error, results) {
+				connect.query(sqlQuery, depId, function (error, results) {
 					if (error) throw error;
 					console.log('Department has been destroyed!');
-					conn.end();
+					
 				});
 			});
 	});
