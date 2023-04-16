@@ -12,6 +12,7 @@ function AskQuestion() {
       choices: [
         "Show all departments",
         "Add a department",
+        "Remove a department",
         "Show all roles",
         "Add a role",
         "Show all employees",
@@ -21,8 +22,7 @@ function AskQuestion() {
       ],
     },
   ])
-
-    .then(function (answer) {
+     .then(function (answer) {
       switch (answer.prompt) {
         case 'Show all departments':
           viewAllDep();
@@ -49,7 +49,6 @@ const addDepartment = () => {
       type: "input",
       message: 'What is the name of Department?',
       name: 'name'
-
     }
   ])
     .then((response) => {
@@ -57,12 +56,42 @@ const addDepartment = () => {
       connect.query(sqlQuery, response, function (error, results) {
         if (error) throw error;
         console.log('New department has been successfully created!');
-
         AskQuestion();
       });
     })
 };
 
+const removeDepartment = () => {
+  connect.query('SELECT * FROM department', function (error, results) {
+		let departments = [];
+		if (error) throw error;
+		departments = results.map(result => ({
+			id: result.id,
+			name: result.name,
+		}));
+		inquirer
+			.prompt([
+				{
+					type: 'list',
+					name: 'id',
+					message: 'Which department would you like to remove?',
+					choices: departments.map(dep => ({
+						name: dep.name,
+						value: dep.id,
+					})),
+				},
+			])
+			.then(response => {
+				let sqlQuery = 'DELETE FROM department where id = ?';
+				let depId = response.id;
+				conn.query(sqlQuery, depId, function (error, results) {
+					if (error) throw error;
+					console.log('Department has been destroyed!');
+					conn.end();
+				});
+			});
+	});
+}
 
 
 
