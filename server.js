@@ -56,6 +56,8 @@ function AskQuestion() {
         case 'Update an employee role':
           updateEmployeeRole()
           break;
+        default:
+          return done();
 
       }
 
@@ -279,18 +281,18 @@ function removeEmployee() {
       value: employee.id,
     }));
     employees.unshift({
-			name: 'None',
-			value: null,
-		});
+      name: 'None',
+      value: null,
+    });
     inquirer.prompt([
-        {
-          type: 'list',
-          name: 'id',
-          message: 'Which employee would you like to remove?',
-          choices: employees
-          }
-        ])
-      
+      {
+        type: 'list',
+        name: 'id',
+        message: 'Which employee would you like to remove?',
+        choices: employees
+      }
+    ])
+
       .then(response => {
         console.log(response);
         let sqlQuery = 'DELETE FROM employee where id = ?';
@@ -304,4 +306,62 @@ function removeEmployee() {
   });
 };
 
+// Update Employee
+function updateEmployeeRole() {
+  const sqlQuery = 'SELECT id, first_name, last_name, role_id FROM employee';
+	connect.query(sqlQuery, function (error, results) {
+		if (error) throw error;
+		const employees = results.map(employee => ({
+			name: `${employee.first_name} ${employee.last_name}`,
+			value: employee.id,
+		}));
+		employees.unshift({
+			name: 'None',
+			value: null,
+		});
+		inquirer
+			.prompt([
+				{
+					type: 'list',
+					name: 'id',
+					message: "Which employee's role do you want to update?",
+					choices: employees,
+				},
+			])
+			.then(({ id }) => {
+				const roleQuery = 'SELECT * FROM role';
+				connect.query(roleQuery, function (error, results) {
+					if (error) throw error;
+					console.log(results);
+					const roles = results.map(result => ({
+						name: result.title,
+						value: result.id,
+					}));
 
+					inquirer
+						.prompt([
+							{
+								type: 'list',
+								name: 'role_id',
+								message: 'Which is the new role for this employee employee?',
+								choices: roles,
+							},
+						])
+						.then(({ role_id }) => {
+							const updateQuery = `UPDATE employee SET ? WHERE id = ${id}`;
+							connect.query(updateQuery, { role_id }, function (error, results) {
+								if (error) throw error;
+								console.log("Updated employee's role");
+								AskQuestion()
+							});
+						});
+				});
+			});
+	});
+};
+
+// Time to go
+function done() {
+  console.log("I hope you enjoyed from my coding");
+  process.exit();
+}
