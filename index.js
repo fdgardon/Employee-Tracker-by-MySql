@@ -124,11 +124,14 @@ function removeDepartment() {
 
 // show all roles 
 function showAllRoles() {
-  connect.query("SELECT * FROM role", (err, res) => {
-    if (err) throw err;
-    console.table(res);
-    AskQuestion();
-  });
+  let sqlQuery =
+  'SELECT * FROM role LEFT JOIN department on role.department_id = department.id';
+connect.query(sqlQuery, function (error, results) {
+  if (error) throw error;
+  console.table(results);
+  AskQuestion();
+});
+
 };
 
 function addARole() {
@@ -219,7 +222,8 @@ function showAllEmployees() {
   let sqlQuery = `SELECT employee.id, employee.first_name, employee.last_name,
        CONCAT (employee.first_name,' ', employee.last_name)
        as NAME, role.title as ROLE, 
-       department.name as DEPARTMENT, 
+       department.name as DEPARTMENT,
+       role.salary as ROLE, 
        CONCAT (manager.first_name, ' ', manager.last_name) 
        AS MANAGER FROM employee 
        LEFT JOIN role on employee.role_id = role.id 
@@ -227,7 +231,7 @@ function showAllEmployees() {
        LEFT JOIN employee manager on employee.manager_id = manager.id`;
   connect.query(sqlQuery, function (error, results) {
     if (error) throw error;
-    console.table(results, ['NAME', 'ROLE', 'DEPARTMENT', 'MANAGER']);
+    console.table(results, ['NAME', 'ROLE', 'DEPARTMENT', 'SALARY', 'MANAGER']);
     AskQuestion();
   })
 };
