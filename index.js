@@ -243,9 +243,9 @@ function addAnEmployee() {
   connect.query(roleQuery, function (error, results) {
     let roles = [];
     if (error) throw error;
-    roles = results.map(result => ({
-      id: result.id,
-      title: result.title,
+    const roleChoices = roles.map(({id, title}) => ({
+      name: title,
+      value: id
     }));
 
     inquirer
@@ -261,9 +261,10 @@ function addAnEmployee() {
           message: "What is the employee's last name?",
         },
         {
-          type: "input",
-          name: "role_id",
-          message: "What is the employee's role ID?",
+          type: "list",
+          name: "roleid",
+          message: "What is the employee's role?",
+          choices: roleChoices
         },
       ])
       .then((response) => {
