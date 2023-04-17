@@ -125,12 +125,12 @@ function removeDepartment() {
 // show all roles 
 function showAllRoles() {
   let sqlQuery =
-  `SELECT * FROM role LEFT JOIN department on role.department_id = department.id`
-connect.query(sqlQuery, function (error, results) {
-  if (error) throw error;
-  console.table(results, ['id', 'title', 'name', 'salary']);
-  AskQuestion();
-});
+    `SELECT * FROM role LEFT JOIN department on role.department_id = department.id`
+  connect.query(sqlQuery, function (error, results) {
+    if (error) throw error;
+    console.table(results, ['id', 'title', 'name', 'salary']);
+    AskQuestion();
+  });
 
 };
 // add roles
@@ -243,7 +243,7 @@ function addAnEmployee() {
   connect.query(roleQuery, function (error, results) {
     let roles = results;
     if (error) throw error;
-    const roleChoices = roles.map(({id, title}) => ({
+    const roleChoices = roles.map(({ id, title }) => ({
       name: title,
       value: id
     }));
@@ -262,15 +262,15 @@ function addAnEmployee() {
         },
         {
           type: "list",
-          name: "roleid",
+          name: "role_id",
           message: "What is the employee's role?",
           choices: roleChoices
         },
       ])
-      .then((response) => {
-        connect.query("INSERT INTO employee SET ?", response, (err, results) => {
-          if (err) throw err;
-          console.log("Employee added successfully.");
+      .then(response => {
+        connect.query(sqlQuery, response, function (error, results) {
+          if (error) throw error;
+          console.log('Welcome the new employee!');
           AskQuestion()
         });
       });
