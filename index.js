@@ -223,7 +223,7 @@ function showAllEmployees() {
        CONCAT (employee.first_name,' ', employee.last_name)
        as NAME, role.title as ROLE, 
        department.name as DEPARTMENT,
-       role.salary as ROLE, 
+       role.salary as SALARY, 
        CONCAT (manager.first_name, ' ', manager.last_name) 
        AS MANAGER FROM employee 
        LEFT JOIN role on employee.role_id = role.id 
