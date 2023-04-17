@@ -29,4 +29,4 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 This project has been deployed to GitHub Pages. To get this project up and running, you can follow the video link. Or, download the sources files to use this as a template.
 
-Check my work - click! 
+Check my work - click! https://youtu.be/_Iyh0EgN8MM
